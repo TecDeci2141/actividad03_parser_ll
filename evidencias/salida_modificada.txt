@@ -1,0 +1,103 @@
+
+=== 1. precedencia: id + num * id ===
+  [pos=0, lookahead=ID "id"] E -> T E'
+  [pos=0, lookahead=ID "id"] T -> F T'
+  [pos=0, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=1, lookahead=MAS "+"] T' -> epsilon
+  [pos=1, lookahead=MAS "+"] E' -> + T E'
+  [consume] MAS "+"
+  [pos=2, lookahead=NUM "num"] T -> F T'
+  [pos=2, lookahead=NUM "num"] F -> NUM
+  [consume] NUM "num"
+  [pos=3, lookahead=POR "*"] T' -> * F T'
+  [consume] POR "*"
+  [pos=4, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=5, lookahead=FIN "$"] T' -> epsilon
+  [pos=5, lookahead=FIN "$"] E' -> epsilon
+  [consume] FIN "$"
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 2. parentesis: (id + num) * id ===
+  [pos=0, lookahead=PAR_IZQ "("] E -> T E'
+  [pos=0, lookahead=PAR_IZQ "("] T -> F T'
+  [pos=0, lookahead=PAR_IZQ "("] F -> ( E )
+  [consume] PAR_IZQ "("
+  [pos=1, lookahead=ID "id"] E -> T E'
+  [pos=1, lookahead=ID "id"] T -> F T'
+  [pos=1, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=2, lookahead=MAS "+"] T' -> epsilon
+  [pos=2, lookahead=MAS "+"] E' -> + T E'
+  [consume] MAS "+"
+  [pos=3, lookahead=NUM "num"] T -> F T'
+  [pos=3, lookahead=NUM "num"] F -> NUM
+  [consume] NUM "num"
+  [pos=4, lookahead=PAR_DER ")"] T' -> epsilon
+  [pos=4, lookahead=PAR_DER ")"] E' -> epsilon
+  [consume] PAR_DER ")"
+  [pos=5, lookahead=POR "*"] T' -> * F T'
+  [consume] POR "*"
+  [pos=6, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=7, lookahead=FIN "$"] T' -> epsilon
+  [pos=7, lookahead=FIN "$"] E' -> epsilon
+  [consume] FIN "$"
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 3. resta y division: id - num / id ===
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 4. expresion minima: id ===
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 5. operadores consecutivos: id + * num ===
+  [pos=0, lookahead=ID "id"] E -> T E'
+  [pos=0, lookahead=ID "id"] T -> F T'
+  [pos=0, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=1, lookahead=MAS "+"] T' -> epsilon
+  [pos=1, lookahead=MAS "+"] E' -> + T E'
+  [consume] MAS "+"
+  [pos=2, lookahead=POR "*"] T -> F T'
+  [ERROR sintactico] F no tiene produccion para POR "*" en pos=2.
+Resultado: RECHAZADA | Esperado: RECHAZADA | OK
+
+=== 6. falta parentesis derecho ===
+  [ERROR sintactico] Se esperaba PAR_DER y se encontro FIN "$" en pos=4.
+Resultado: RECHAZADA | Esperado: RECHAZADA | OK
+
+=== 7. cierre inesperado: id ) ===
+  [ERROR sintactico] Se esperaba FIN y se encontro PAR_DER ")" en pos=1.
+Resultado: RECHAZADA | Esperado: RECHAZADA | OK
+
+=== 8. tokens despues de FIN: id $ id ===
+  [ERROR sintactico] Existen tokens despues de FIN.
+Resultado: RECHAZADA | Esperado: RECHAZADA | OK
+
+=== 9. menos unario: -id * num ===
+  [pos=0, lookahead=MENOS "-"] E -> T E'
+  [pos=0, lookahead=MENOS "-"] T -> F T'
+  [pos=0, lookahead=MENOS "-"] F -> - F
+  [consume] MENOS "-"
+  [pos=1, lookahead=ID "id"] F -> ID
+  [consume] ID "id"
+  [pos=2, lookahead=POR "*"] T' -> * F T'
+  [consume] POR "*"
+  [pos=3, lookahead=NUM "num"] F -> NUM
+  [consume] NUM "num"
+  [pos=4, lookahead=FIN "$"] T' -> epsilon
+  [pos=4, lookahead=FIN "$"] E' -> epsilon
+  [consume] FIN "$"
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 10. menos unario despues de suma ===
+Resultado: ACEPTADA | Esperado: ACEPTADA | OK
+
+=== 11. menos unario sin operando ===
+  [ERROR sintactico] F no tiene produccion para FIN "$" en pos=1.
+Resultado: RECHAZADA | Esperado: RECHAZADA | OK
+
+RESUMEN pruebas=11 aciertos=11 fallos=0
+estado=0
